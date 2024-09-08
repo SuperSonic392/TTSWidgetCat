@@ -1,49 +1,86 @@
-// Setup connection to chat and TTS
-// Assume connection to your streaming platform's API like Twitch, YouTube, or Streamlabs
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom TTS Cat</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: transparent;
+        }
 
-const character = document.getElementById('cat-character');
-const neonElements = document.getElementById('neon-elements');
+        .character {
+            position: absolute;
+            bottom: -100%; /* Start off-screen */
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 1s ease-in-out;
+            width: 400px; /* Adjust size as needed */
+        }
 
-// Function to animate the character up and down
-function animateCharacter(up) {
-    if (up) {
-        character.style.bottom = '10%'; // Animate up into view
-    } else {
-        character.style.bottom = '-100%'; // Animate down out of view
-    }
-}
+        .character img {
+            position: absolute;
+        }
 
-// Function to change neon color based on chat name color
-function setNeonColor(color) {
-    neonElements.style.backgroundColor = color; // Change color based on chat user's name
-}
+        .base {
+            z-index: 1;
+        }
 
-// Function to adjust brightness of neon elements based on TTS volume
-function adjustNeonBrightness(volume) {
-    const brightness = 1 + (volume / 100); // Adjust brightness dynamically
-    neonElements.style.filter = `brightness(${brightness})`;
-}
+        .neon {
+            z-index: 2;
+        }
 
-// Mock function to simulate receiving a chat message and TTS event
-function receiveChatMessage(message, userColor) {
-    // Simulate TTS volume based on message length
-    const ttsVolume = Math.min(100, message.length * 5); // Example logic
+        .neon {
+            filter: brightness(1);
+            transition: filter 0.2s linear, background-color 0.2s linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="character" id="cat-character">
+        <!-- Base un-colorable character PNG -->
+        <img src="https://your-image-host.com/base-cat.png" alt="Base Cat" class="base">
+        <!-- Neon elements (eyes and collar) -->
+        <img src="https://your-image-host.com/neon-elements.png" alt="Neon Eyes and Collar" class="neon" id="neon-elements">
+    </div>
 
-    // Animate character up
-    animateCharacter(true);
+    <script>
+        const character = document.getElementById('cat-character');
+        const neonElements = document.getElementById('neon-elements');
 
-    // Set the neon color based on the chat user
-    setNeonColor(userColor);
+        function animateCharacter(up) {
+            if (up) {
+                character.style.bottom = '10%'; // Animate up into view
+            } else {
+                character.style.bottom = '-100%'; // Animate down out of view
+            }
+        }
 
-    // Adjust neon brightness based on TTS volume
-    adjustNeonBrightness(ttsVolume);
+        function setNeonColor(color) {
+            neonElements.style.backgroundColor = color; // Change color based on chat user's name
+        }
 
-    // Simulate speaking (TTS duration based on message length)
-    setTimeout(() => {
-        // Animate character down after the message is "spoken"
-        animateCharacter(false);
-    }, message.length * 100); // Assume 100ms per character
-}
+        function adjustNeonBrightness(volume) {
+            const brightness = 1 + (volume / 100); // Adjust brightness dynamically
+            neonElements.style.filter = `brightness(${brightness})`;
+        }
 
-// Example usage: you can replace this with actual chat message hooks
-receiveChatMessage('Hello from chat!', '#FF69B4'); // Sample pink user color
+        function receiveChatMessage(message, userColor) {
+            const ttsVolume = Math.min(100, message.length * 5); // Example logic
+
+            animateCharacter(true);
+            setNeonColor(userColor);
+            adjustNeonBrightness(ttsVolume);
+
+            setTimeout(() => {
+                animateCharacter(false);
+            }, message.length * 100); // Assume 100ms per character
+        }
+
+        // Example usage: Replace with actual chat message hooks
+        receiveChatMessage('Hello from chat!', '#FF69B4'); // Sample pink user color
+    </script>
+</body>
+</html>
